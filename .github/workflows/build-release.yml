@@ -22,16 +22,17 @@ jobs:
           GOOS: linux
           GOARCH: arm64
         run: |
-          go build -ldflags "-w -s" -o gowget main.go
-          upx --brute gowget
-          sha256sum gowget > gowget.sha256
+          vers="1.${{ github.run_number }}"
+          go build -ldflags "-w -s" -o "gowget-$(vers)" main.go
+          upx --brute "gowget-$(vers)"
+          sha256sum "gowget-$(vers)" > gowget-$(vers).sha256
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            gowget
-            gowget.sha256
-          tag_name: release-${{ github.run_number }}
+            "gowget-1.${{ github.run_number }}"
+            "gowget-1.${{ github.run_number }}.sha256"
+          tag_name: 1.${{ github.run_number }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
